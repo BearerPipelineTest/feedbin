@@ -45,7 +45,9 @@ class User < ApplicationRecord
     :favicon_colors,
     :newsletter_tag,
     :feeds_width,
-    :entries_width
+    :entries_width,
+    :account_access_token
+
 
   has_one :coupon
   has_many :subscriptions, dependent: :delete_all
