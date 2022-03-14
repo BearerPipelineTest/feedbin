@@ -1,0 +1,42 @@
+<div class="push-options">
+    <% if @migration.pending? %>
+        <span class="spinner pull-left"></span> &nbsp; 
+        <%= @migration.account_migration_items.where(status: [:complete, :failed]).count %>
+        of
+        <%= @migration.account_migration_items.count %>
+        imported.
+    <% elsif @migration.failed? %>
+        Feedbin encountered an error while migrating your account. <a>Retry?</a>
+    <% else %>
+        Migration Complete! Review the details below.
+    <% end %>
+</div>
+    
+<div class="inset">
+    <h4 class="group-header">Stats</h4>
+    <ul class="pill-list">
+        <li>Subscriptions <span class="pull-right">237</span></li>
+        <li>Starred Articles <span class="pull-right">1,378</span></li>
+    </ul>
+</div>
+
+<div class="inset">
+    <h4 class="group-header">Subscriptions</h4>
+    <ul class="pill-list">
+        <% @migration.account_migration_items.each do |item| %>
+        <li>
+            <%= item.title %> <span class="pull-right badge-<%= item.status.downcase %>"><%= item.status %></span>
+            <br>
+            <span class="muted">
+                <small>
+                    <% if item.pending? %>
+                        <%= short_url(item.feed_url) %>
+                    <% else item.complete? %>
+                        <%= item.message %>
+                    <% end %>
+                </small>
+            </span>
+        </li>
+        <% end %>
+    </ul>
+</div>

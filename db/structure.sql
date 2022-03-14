@@ -28,6 +28,75 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: account_migration_items; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.account_migration_items (
+    id bigint NOT NULL,
+    account_migration_id bigint NOT NULL,
+    status bigint DEFAULT 0 NOT NULL,
+    data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    message text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: account_migration_items_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.account_migration_items_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: account_migration_items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.account_migration_items_id_seq OWNED BY public.account_migration_items.id;
+
+
+--
+-- Name: account_migrations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.account_migrations (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    api_token text NOT NULL,
+    status bigint DEFAULT 0 NOT NULL,
+    data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    message text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: account_migrations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.account_migrations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: account_migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.account_migrations_id_seq OWNED BY public.account_migrations.id;
+
+
+--
 -- Name: actions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -316,7 +385,8 @@ CREATE TABLE public.entries (
     thread_id bigint,
     settings jsonb,
     main_tweet_id text,
-    queued_entries_count bigint DEFAULT 0 NOT NULL
+    queued_entries_count bigint DEFAULT 0 NOT NULL,
+    migration_id text
 );
 
 
@@ -1193,6 +1263,20 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
+-- Name: account_migration_items id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.account_migration_items ALTER COLUMN id SET DEFAULT nextval('public.account_migration_items_id_seq'::regclass);
+
+
+--
+-- Name: account_migrations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.account_migrations ALTER COLUMN id SET DEFAULT nextval('public.account_migrations_id_seq'::regclass);
+
+
+--
 -- Name: actions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1414,6 +1498,22 @@ ALTER TABLE ONLY public.updated_entries ALTER COLUMN id SET DEFAULT nextval('pub
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: account_migration_items account_migration_items_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.account_migration_items
+    ADD CONSTRAINT account_migration_items_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: account_migrations account_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.account_migrations
+    ADD CONSTRAINT account_migrations_pkey PRIMARY KEY (id);
 
 
 --
@@ -1681,6 +1781,27 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: index_account_migration_items_on_account_migration_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_account_migration_items_on_account_migration_id ON public.account_migration_items USING btree (account_migration_id);
+
+
+--
+-- Name: index_account_migrations_on_api_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_account_migrations_on_api_token ON public.account_migrations USING btree (api_token);
+
+
+--
+-- Name: index_account_migrations_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_account_migrations_on_user_id ON public.account_migrations USING btree (user_id);
+
+
+--
 -- Name: index_actions_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1769,6 +1890,13 @@ CREATE UNIQUE INDEX index_embeds_on_source_and_provider_id ON public.embeds USIN
 --
 
 CREATE INDEX index_entries_on_feed_id ON public.entries USING btree (feed_id);
+
+
+--
+-- Name: index_entries_on_feed_id_and_migration_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entries_on_feed_id_and_migration_id ON public.entries USING btree (feed_id, migration_id) WHERE (migration_id IS NOT NULL);
 
 
 --
@@ -2560,6 +2688,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220128221704'),
 ('20220204123745'),
 ('20220204142012'),
-('20220204194100');
+('20220204194100'),
+('20220302204617'),
+('20220302204713'),
+('20220306124920');
 
 

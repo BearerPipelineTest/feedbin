@@ -9600,3 +9600,32 @@ $tooltip-arrow-height: 6px;
 .spacer {
     margin-left: base-units(1);
 }
+
+.badge-failed, .badge-pending, .badge-complete {
+    padding: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @include color($color-contrast-700);
+    font-style: normal;
+    border-radius: 4px;
+    font-family: $font-stack;
+    line-height: 1;
+    font-size: 14px;
+    text-transform: capitalize !important;
+    font-weight: bold;
+    color: #fff !important;
+    &.wide {
+        width: 72px;
+    }
+}
+
+.badge-failed {
+    @include background-color($color-accent-red-600);
+}
+.badge-pending {
+    @include background-color($color-accent-blue-400);
+}
+.badge-complete {
+    @include background-color($color-accent-green-600);
+}

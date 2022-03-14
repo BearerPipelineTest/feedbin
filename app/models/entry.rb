@@ -14,6 +14,7 @@ class Entry < ApplicationRecord
   before_create :create_summary
   before_create :update_content
   before_create :tweet_metadata
+  before_create :add_migration_id
   before_update :create_summary
   after_commit :cache_public_id, on: :create
   after_commit :find_images, on: :create
@@ -377,6 +378,18 @@ class Entry < ApplicationRecord
 
   def published_recently?
     published > 7.days.ago
+  end
+
+  def add_migration_id
+    result = entry_id
+    if result.nil?
+      safe_url = url.to_s
+      safe_title = title.to_s
+      result = safe_url + safe_title
+    end
+    result = result[0...255]
+    result = result.gsub(/\s/, "")
+    self.migration_id = result
   end
 
   private

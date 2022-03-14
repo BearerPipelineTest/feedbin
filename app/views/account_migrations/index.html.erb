@@ -1,0 +1,11 @@
+<div class="settings-content-inner">
+    <div class="settings-outer">
+        <h2>Account Migration</h2>
+        <p class="muted">Welcome to Feedbin. You can migrate your subscriptions, unread and starred articles.</p>
+    </div>
+
+    <%= content_tag :div, data: {content_src: account_migrations_path} do %>
+        <%= render partial: "account_migration" %>
+    <% end %>
+
+</div>

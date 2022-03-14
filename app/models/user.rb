@@ -45,9 +45,7 @@ class User < ApplicationRecord
     :favicon_colors,
     :newsletter_tag,
     :feeds_width,
-    :entries_width,
-    :account_access_token
-
+    :entries_width
 
   has_one :coupon
   has_many :subscriptions, dependent: :delete_all
@@ -69,6 +67,7 @@ class User < ApplicationRecord
   has_many :updated_entries, dependent: :delete_all
   has_many :devices, dependent: :delete_all
   has_many :authentication_tokens, dependent: :delete_all
+  has_many :account_migrations, dependent: :delete_all
   has_many :in_app_purchases
   belongs_to :plan
 

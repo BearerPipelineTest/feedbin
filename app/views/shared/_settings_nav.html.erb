@@ -94,6 +94,17 @@
             </span>
         <% end %>
     </li>
+    <li>
+        <%= link_to account_migrations_path, class: is_active?("account_migrations", "index") do %>
+            <span class="icon-wrap">
+                <%= svg_tag "menu-icon-migration", inline: true %>
+            </span>
+            <span class="menu-text">
+                <span class="title">Account Migration</span>
+                <span class="subtitle">Howdy!</span>
+            </span>
+        <% end %>
+    </li>
 
     <li class="nav-header">
         <div>Admin</div>
